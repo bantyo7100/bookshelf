@@ -7,6 +7,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg
 from django.core.paginator import Paginator
+from django.views.generic.edit import UpdateView
 
 class ListBookView(generic.ListView):
     template_name = 'book/book_list.html'
@@ -64,12 +65,13 @@ class UpdateBookView(LoginRequiredMixin, generic.UpdateView):
     context_object_name = 'Shelf'
     fields = ('title', 'text', 'category', 'thumbnail')
     success_url = reverse_lazy('list-book')
-    
+
     def dispatch(self, request, *args, **kwargs):
         obj = self.get_object()
         if obj.user != self.request.user:
             raise PermissionDenied('編集権限がありません。')
         return super(UpdateView, self).dispatch(request, *args, **kwargs)
+    
     
 class CreateReviewView(LoginRequiredMixin, generic.CreateView):
     model = Review
